@@ -1,7 +1,7 @@
 /************************************************************
 *                                                           *
 *     The Game Fifteen 0.50                                 *
-*     Written by: © Todor Balabanov - TeodorGig@mail.ru     *
+*     Written by: © Todor Balabanov - tdb@tbsoft.eu         *
 *                                                           *
 *     New Bulgarian University, Sofia, 2004                 *
 *                                                           *
