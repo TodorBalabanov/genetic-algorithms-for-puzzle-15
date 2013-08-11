@@ -1,35 +1,95 @@
-/************************************************************
- *                                                           *
- *     The Game Fifteen 0.50                                 *
- *     Written by: © Todor Balabanov - tdb@tbsoft.eu         *
- *                                                           *
- *     New Bulgarian University, Sofia, 2004                 *
- *                                                           *
- *************************************************************
- *                                                           *
- *     This distribution is free, and comes with no          *
- *     warranty. The program is open source provided under   *
- *     the GNU General Public License.                       *
- *                                                           *
- ************************************************************/
+/*============================================================
+ =                                                           =
+ =     The Game Fifteen 0.51                                 =
+ =     Written by: © Todor Balabanov - tdb@tbsoft.eu         =
+ =                                                           =
+ =     New Bulgarian University, Sofia, 2004-2013            =
+ =                                                           =
+ =============================================================
+ =                                                           =
+ =     This distribution is free, and comes with no          =
+ =     warranty. The program is open source provided under   =
+ =     the GNU General Public License.                       =
+ =                                                           =
+ ============================================================*/
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.applet.*;
+import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Random;
 
+/**
+ * Global constants class.
+ * 
+ * @author Todor Balabanov
+ * @author tdb@tbsoft.eu
+ */
+class Globals {
+	public static final int RIGHT = 1;
+	public static final int DOWN = 2;
+	public static final int LEFT = 4;
+	public static final int UP = 16;
+	
+	public static final int EMPTY = 16;
+}
+
+/**
+ * Class for the genetic algorithm.
+ * 
+ * @author Todor Balabanov
+ * @author tdb@tbsoft.eu
+ */
 class GeneticAlgorithm {
-	private final int POPUL_SIZE = 64;
-	private final int AVR_CHOM_SIZE = 150;
+	/**
+	 * Pseudo-random number generator.
+	 */
+	private static final Random prng = new Random();
 
+	/**
+	 * Population size
+	 */
+	private final int POPULATION_SIZE = 131;
+
+	/**
+	 * Average chromosome size.
+	 */
+	private final int AVERAGE_CHROMOSOME_SIZE = 150;
+
+	/**
+	 * Population
+	 */
 	private int[][] population;
+
+	/**
+	 * Fitness value for each chromosome.
+	 */
 	private double fitness[];
 
+	/**
+	 * Constructor without parameters.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public GeneticAlgorithm() {
-		population = new int[4 * POPUL_SIZE][];
-		fitness = new double[4 * POPUL_SIZE];
+		population = new int[4 * POPULATION_SIZE][];
+		fitness = new double[4 * POPULATION_SIZE];
 	}
 
+	/**
+	 * 
+	 * @return String representation.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public String toString() {
 		String str = "";
 
@@ -45,136 +105,262 @@ class GeneticAlgorithm {
 		return (str);
 	}
 
-	private int[] chrom() {
+	/**
+	 * Generate random chromosome.
+	 * 
+	 * @return Chromosome with random size and values.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	private int[] generateRandomChromosome() {
 		int[] chrom = null;
 
-		chrom = new int[1 + (int) (AVR_CHOM_SIZE * Math.random())];
+		chrom = new int[1 + prng.nextInt(AVERAGE_CHROMOSOME_SIZE)];
 		for (int i = 0; i < chrom.length; i++)
-			switch ((int) (4 * Math.random())) {
+			switch (prng.nextInt(4)) {
 			case (0):
-				chrom[i] = The15.RIGHT;
+				chrom[i] = Globals.RIGHT;
 				break;
 			case (1):
-				chrom[i] = The15.DOWN;
+				chrom[i] = Globals.DOWN;
 				break;
 			case (2):
-				chrom[i] = The15.LEFT;
+				chrom[i] = Globals.LEFT;
 				break;
 			case (3):
-				chrom[i] = The15.UP;
+				chrom[i] = Globals.UP;
 				break;
 			}
 
 		return (chrom);
 	}
 
-	private int[] cross(int[] a, int[] b) {
+	/**
+	 * Crossover two chromosomes.
+	 * 
+	 * @param a
+	 *            Parent 1.
+	 * @param b
+	 *            Parent 2.
+	 * 
+	 * @return Child.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	private int[] crossover(int[] a, int[] b) {
 		int[] c = null;
+
 		int min = Math.min(a.length, b.length);
 		int max = Math.max(a.length, b.length);
-		int pos = (int) ((min + 1) * Math.random());
 
-		if (a.length == max)
+		int pos = prng.nextInt(min + 1);
+
+		if (a.length == max) {
 			c = new int[min];
-		else if (b.length == max)
+		} else if (b.length == max) {
 			c = new int[max];
+		}
 
-		for (int i = 0; i < pos; i++)
+		// TODO Better crossover than single cut point can be used.
+		for (int i = 0; i < pos; i++) {
 			c[i] = a[i];
-		for (int i = pos; i < c.length; i++)
+		}
+
+		for (int i = pos; i < c.length; i++) {
 			c[i] = b[i];
+		}
 
 		return (c);
 	}
 
+	/**
+	 * Fitness array setter.
+	 * 
+	 * @param values
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void setFitness(double[] values) {
 		for (int i = 0; values != null && i < fitness.length
-				&& i < values.length; i++)
+				&& i < values.length; i++) {
 			fitness[i] = values[i];
+		}
 	}
 
+	/**
+	 * Population getter.
+	 * 
+	 * @return Population cloning.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public int[][] getPopulation() {
 		int[][] values = new int[population.length][];
 
-		for (int i = 0; i < population.length; i++)
+		for (int i = 0; i < population.length; i++) {
 			values[i] = new int[population[i].length];
+		}
 
-		for (int i = 0; i < population.length; i++)
-			for (int j = 0; j < population[i].length; j++)
+		for (int i = 0; i < population.length; i++) {
+			for (int j = 0; j < population[i].length; j++) {
 				values[i][j] = population[i][j];
+			}
+		}
 
 		return (values);
 	}
 
+	/**
+	 * Initialize.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void init() {
-		for (int i = 0; i < population.length; i++)
-			population[i] = chrom();
+		for (int i = 0; i < population.length; i++) {
+			population[i] = generateRandomChromosome();
+		}
 	}
 
+	/**
+	 * Do crossover into population.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void crossover() {
-		for (int i = 0; i < population.length / 2; i++)
-			population[population.length / 2 + i] = cross(population[i],
-					population[(int) (population.length / 2 * Math.random())]);
+		for (int i = 0; i < population.length / 2; i++) {
+			population[population.length / 2 + i] = crossover(population[i],
+					population[prng.nextInt(population.length / 2)]);
+		}
 	}
 
+	/**
+	 * Do mutation into population.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void mutate() {
 		for (int i = population.length / 2; i < population.length; i++) {
-			int pos = (int) (population[i].length * Math.random());
+			int pos = prng.nextInt(population[i].length);
 
-			switch ((int) (4 * Math.random())) {
+			switch (prng.nextInt(4)) {
 			case (0):
-				population[i][pos] = The15.RIGHT;
+				population[i][pos] = Globals.RIGHT;
 				break;
 			case (1):
-				population[i][pos] = The15.DOWN;
+				population[i][pos] = Globals.DOWN;
 				break;
 			case (2):
-				population[i][pos] = The15.LEFT;
+				population[i][pos] = Globals.LEFT;
 				break;
 			case (3):
-				population[i][pos] = The15.UP;
+				population[i][pos] = Globals.UP;
 				break;
 			}
 		}
 	}
 
+	/**
+	 * Survival selection into population.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void select() {
 		boolean done;
 		do {
 			done = true;
 
-			for (int i = 0; i < population.length - 1; i++)
-				if (fitness[i] > fitness[i + 1] && population[i] != null
-						&& population[i + 1] != null) {
-					int[] buff = population[i];
-					double temp = fitness[i];
-					population[i] = population[i + 1];
-					fitness[i] = fitness[i + 1];
-					population[i + 1] = buff;
-					fitness[i + 1] = temp;
-
-					done = false;
+			for (int i = 0; i < population.length - 1; i++) {
+				if (population[i] == null) {
+					continue;
 				}
+
+				if (population[i + 1] == null) {
+					continue;
+				}
+
+				if (fitness[i] <= fitness[i + 1]) {
+					continue;
+				}
+
+				int[] buffer = population[i];
+				double value = fitness[i];
+				population[i] = population[i + 1];
+				fitness[i] = fitness[i + 1];
+				population[i + 1] = buffer;
+				fitness[i + 1] = value;
+
+				done = false;
+			}
 		} while (done == false);
 
-		for (int i = population.length / 4; i < population.length / 2; i++)
-			population[i] = chrom();
-		for (int i = population.length / 2; i < population.length; i++)
+		/*
+		 * Renew second fourth into population.
+		 */
+		for (int i = population.length / 4; i < population.length / 2; i++) {
+			population[i] = generateRandomChromosome();
+		}
+
+		/*
+		 * Clear second half into population.
+		 */
+		for (int i = population.length / 2; i < population.length; i++) {
 			population[i] = null;
+		}
 	}
 }
 
-class GATrainer {
+/**
+ * Genetic algorithm trainer class.
+ * 
+ * @author Todor Balabanov
+ * @author tdb@tbsoft.eu
+ */
+class GeneticAlgorithmTrainer {
+	/**
+	 * Training loops limit.
+	 */
 	private final int TRAIN_LOOPS = 100;
 
+	/**
+	 * Game reference.
+	 */
 	private The15 game;
+
+	/**
+	 * Genetic algorithm reference.
+	 */
 	private GeneticAlgorithm ga;
 
-	public GATrainer(The15 game, GeneticAlgorithm ga) {
+	/**
+	 * Constructor.
+	 * 
+	 * @param game
+	 *            Game object reference.
+	 * @param ga
+	 *            Genetic algorithm reference.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	public GeneticAlgorithmTrainer(The15 game, GeneticAlgorithm ga) {
 		this.game = game;
 		this.ga = ga;
 	}
 
+	/**
+	 * Train procedure.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void train() {
 		int[][] state = game.getState();
 
@@ -190,18 +376,21 @@ class GATrainer {
 			for (int i = 0; i < population.length; i++) {
 				game.setState(state);
 
-				for (int j = 0; j < population[i].length; j++)
+				for (int j = 0; j < population[i].length; j++) {
 					game.makeMove(population[i][j]);
+				}
 
-				fitness[i] = game.howDiffers();
+				fitness[i] = game.checkDifference();
 			}
 
 			ga.setFitness(fitness);
 			ga.select();
 
 			game.setState(state);
-			for (int j = 0; j < population[0].length; j++)
+
+			for (int j = 0; j < population[0].length; j++) {
 				game.makeMove(population[0][j]);
+			}
 
 			if (fitness[0] == 0.0)
 				return;
@@ -209,203 +398,392 @@ class GATrainer {
 	}
 }
 
+/**
+ * Puzzle class.
+ * 
+ * @author Todor Balabanov
+ * @author tdb@tbsoft.eu
+ */
 class The15 {
-	public static final int RIGHT = 1;
-	public static final int DOWN = 2;
-	public static final int LEFT = 4;
-	public static final int UP = 16;
+	/**
+	 * Pseudo-random number generator.
+	 */
+	private static final Random prng = new Random();
 
+	/**
+	 * Blocks.
+	 */
 	private int[][] table;
-	private int[][] solved;
-	private int[] pos;
 
+	/**
+	 * Solved state.
+	 */
+	private int[][] solved;
+
+	/**
+	 * Position as x and y.
+	 */
+	private int[] position;
+
+	/**
+	 * Constructor without parameters.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public The15() {
 		table = new int[4][];
-		for (int i = 0; i < table.length; i++)
+
+		for (int i = 0; i < table.length; i++) {
 			table[i] = new int[4];
+		}
 
 		solved = new int[4][];
-		for (int i = 0; i < solved.length; i++)
+		for (int i = 0; i < solved.length; i++) {
 			solved[i] = new int[4];
+		}
 
-		pos = new int[2];
+		position = new int[2];
 
 		init();
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return Text representation.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public String toString() {
-		String str = "";
+		String text = "";
 
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table[i].length; j++) {
-				if (table[i][j] < 10)
-					str += " ";
+				if (table[i][j] < 10) {
+					text += " ";
+				}
 
-				str += table[i][j] + " ";
+				text += table[i][j] + " ";
 			}
 
-			str += "\n";
+			text += "\n";
 		}
 
-		return (str);
+		return (text);
 	}
 
+	/**
+	 * Initialize.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void init() {
-		for (int i = 0, k = 0; i < table.length; i++)
-			for (int j = 0; j < table[i].length; j++, k++)
-				if (k == 15)
-					table[i][j] = 0;
-				else
+		for (int i = 0, k = 0; i < table.length; i++) {
+			for (int j = 0; j < table[i].length; j++, k++) {
+				if (k == 15) {
+					table[i][j] = Globals.EMPTY;
+				} else {
 					table[i][j] = k + 1;
+				}
+			}
+		}
 
-		for (int i = 0, k = 0; i < solved.length; i++)
-			for (int j = 0; j < solved[i].length; j++, k++)
-				if (k == 15)
+		for (int i = 0, k = 0; i < solved.length; i++) {
+			for (int j = 0; j < solved[i].length; j++, k++) {
+				if (k == 15) {
 					solved[i][j] = 0;
-				else
+				} else
 					solved[i][j] = k + 1;
+			}
+		}
 
-		pos();
+		findEmptyCellPostion();
 	}
 
-	private void pos() {
-		for (int i = 0; i < table.length; i++)
-			for (int j = 0; j < table[i].length; j++)
-				if (table[i][j] == 0) {
-					pos[0] = i;
-					pos[1] = j;
+	/**
+	 * Mark empty cell position.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	private void findEmptyCellPostion() {
+		for (int i = 0; i < table.length; i++) {
+			for (int j = 0; j < table[i].length; j++) {
+				if (table[i][j] == Globals.EMPTY) {
+					position[0] = i;
+					position[1] = j;
 					return;
 				}
+			}
+		}
 	}
 
-	public boolean isValidMove(int dir) {
+	/**
+	 * Check for possible valid move.
+	 * 
+	 * @param direction
+	 *            Direction to check for.
+	 * 
+	 * @return True if there is valid move, false otherwise.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	public boolean isValidMove(int direction) {
 		boolean valid = false;
 
-		switch (dir) {
-		case (RIGHT):
-			if ((pos[1] + 1) >= 0 && (pos[1] + 1) < table[pos[0]].length)
+		switch (direction) {
+		case (Globals.RIGHT):
+			if ((position[1] + 1) >= 0
+					&& (position[1] + 1) < table[position[0]].length) {
 				valid = true;
+			}
 			break;
-		case (DOWN):
-			if ((pos[0] + 1) >= 0 && (pos[0] + 1) < table.length)
+		case (Globals.DOWN):
+			if ((position[0] + 1) >= 0 && (position[0] + 1) < table.length) {
 				valid = true;
+			}
 			break;
-		case (LEFT):
-			if ((pos[1] - 1) >= 0 && (pos[1] - 1) < table[pos[0]].length)
+		case (Globals.LEFT):
+			if ((position[1] - 1) >= 0
+					&& (position[1] - 1) < table[position[0]].length) {
 				valid = true;
+			}
 			break;
-		case (UP):
-			if ((pos[0] - 1) >= 0 && (pos[0] - 1) < table.length)
+		case (Globals.UP):
+			if ((position[0] - 1) >= 0 && (position[0] - 1) < table.length) {
 				valid = true;
+			}
 			break;
 		}
 
 		return (valid);
 	}
 
+	/**
+	 * Game state getter.
+	 * 
+	 * @return Game state as integer matrix.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public int[][] getState() {
 		int[][] state = new int[table.length][];
 
-		for (int i = 0; i < state.length; i++)
+		for (int i = 0; i < state.length; i++) {
 			state[i] = new int[table[i].length];
+		}
 
-		for (int i = 0; i < table.length; i++)
-			for (int j = 0; j < table[i].length; j++)
+		for (int i = 0; i < table.length; i++) {
+			for (int j = 0; j < table[i].length; j++) {
 				state[i][j] = table[i][j];
+			}
+		}
 
 		return (state);
 	}
 
+	/**
+	 * Game state setter.
+	 * 
+	 * @param state
+	 *            New state.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public void setState(int[][] state) {
 		try {
-			for (int i = 0; i < table.length; i++)
-				for (int j = 0; j < table[i].length; j++)
+			for (int i = 0; i < table.length; i++) {
+				for (int j = 0; j < table[i].length; j++) {
 					table[i][j] = state[i][j];
+				}
+			}
 
-			pos();
+			findEmptyCellPostion();
 		} catch (Exception ex) {
 			init();
 		}
 	}
 
+	/**
+	 * Check for solved puzzle.
+	 * 
+	 * @return True if it is solved, false otherwise.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
 	public boolean isDone() {
-		if (howDiffers() == 0.0)
+		if (checkDifference() == 0.0) {
 			return (true);
+		}
 
 		return (false);
 	}
 
-	public double howDiffers() {
-		double diff = 0.0;
+	/**
+	 * Calculate space distnace.
+	 * 
+	 * @return How far is the solution to the perfect solution.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	public double checkDifference() {
+		// TODO Better space distance formula can be used.
+		double difference = 0.0;
 
 		int k = 1;
-		for (int i = 0; i < table.length && i < solved.length; i++)
-			for (int j = 0; j < table[i].length && j < solved[i].length; j++, k++)
-				diff += Math.pow(solved[i][j] - table[i][j], 2);
+		for (int i = 0; i < table.length && i < solved.length; i++) {
+			for (int j = 0; j < table[i].length && j < solved[i].length; j++, k++) {
+				difference += Math.pow(solved[i][j] - table[i][j], 2);
+			}
+		}
 
-		diff = Math.sqrt(diff) / k;
+		difference = Math.sqrt(difference) / k;
 
-		return (diff);
+		return (difference);
 	}
 
-	public void mix() {
+	/**
+	 * Puzzle shuffle.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	public void shuffle() {
 		int[] posTo = new int[2];
-		posTo[0] = pos[0];
-		posTo[1] = pos[1];
+		posTo[0] = position[0];
+		posTo[1] = position[1];
 
-		for (int i = 0; i < 10000 || posTo[0] != pos[0] || posTo[1] != pos[1]; i++)
-			switch ((int) (4 * Math.random())) {
+		for (int i = 0; i < 10000 || posTo[0] != position[0]
+				|| posTo[1] != position[1]; i++) {
+			switch (prng.nextInt(4)) {
 			case (0):
-				makeMove(RIGHT);
+				makeMove(Globals.RIGHT);
 				break;
 			case (1):
-				makeMove(DOWN);
+				makeMove(Globals.DOWN);
 				break;
 			case (2):
-				makeMove(LEFT);
+				makeMove(Globals.LEFT);
 				break;
 			case (3):
-				makeMove(UP);
+				makeMove(Globals.UP);
 				break;
 			}
+		}
 	}
 
-	public void makeMove(int dir) {
-		switch (dir) {
-		case (RIGHT):
-			makeMove(pos[0], pos[1] + 1);
+	/**
+	 * Do move.
+	 * 
+	 * @param direction
+	 *            In wich direction move to be done.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	public void makeMove(int direction) {
+		switch (direction) {
+		case (Globals.RIGHT):
+			makeMove(position[0], position[1] + 1);
 			break;
-		case (DOWN):
-			makeMove(pos[0] + 1, pos[1]);
+		case (Globals.DOWN):
+			makeMove(position[0] + 1, position[1]);
 			break;
-		case (LEFT):
-			makeMove(pos[0], pos[1] - 1);
+		case (Globals.LEFT):
+			makeMove(position[0], position[1] - 1);
 			break;
-		case (UP):
-			makeMove(pos[0] - 1, pos[1]);
+		case (Globals.UP):
+			makeMove(position[0] - 1, position[1]);
 			break;
 		}
 	}
 
-	public void makeMove(int a, int b) {
-		for (int i = a - 1; i <= a + 1; i++)
-			for (int j = b - 1; j <= b + 1; j++)
-				if (i >= 0 && j >= 0 && a >= 0 && b >= 0 && i < table.length
-						&& j < table[i].length && a < table.length
-						&& b < table[i].length && (a != i || b != j)
-						&& (a == i || b == j))
-					if (table[i][j] == 0) {
-						int buff;
-						buff = table[i][j];
-						table[i][j] = table[a][b];
-						table[a][b] = buff;
-						pos[0] = a;
-						pos[1] = b;
-						return;
-					}
+	/**
+	 * Do move.
+	 * 
+	 * @param x
+	 *            Cell x coordinate.
+	 * @param y
+	 *            Cell y coordinate.
+	 * 
+	 * @author Todor Balabanov
+	 * @author tdb@tbsoft.eu
+	 */
+	public void makeMove(int x, int y) {
+		if (x < 0) {
+			return;
+		}
+		if (y < 0) {
+			return;
+		}
+		if (x >= table.length) {
+			return;
+		}
+		if (y >= table[x].length) {
+			return;
+		}
+
+		for (int i = x - 1; i <= x + 1; i++) {
+			if (i < 0) {
+				continue;
+			}
+			if (i >= table.length) {
+				continue;
+			}
+
+			for (int j = y - 1; j <= y + 1; j++) {
+				if (j < 0) {
+					continue;
+				}
+				if (j >= table[i].length) {
+					continue;
+				}
+
+				if (table[i][j] != Globals.EMPTY) {
+					/*
+					 * Empty cell is not moving.
+					 */
+					continue;
+				}
+				if (x == i && y == j) {
+					/*
+					 * THere is no need to move cell to itself.
+					 */
+					continue;
+				}
+				if (x != i && y != j) {
+					/*
+					 * Only top, down, left and right postiotions are valid.
+					 */
+					continue;
+				}
+
+				int value;
+				value = table[i][j];
+				table[i][j] = table[x][y];
+				table[x][y] = value;
+				position[0] = x;
+				position[1] = y;
+				return;
+			}
+		}
 	}
 }
 
+/**
+ * Application class.
+ * 
+ * @author Todor Balabanov
+ * @author tdb@tbsoft.eu
+ */
 public class The15App extends Applet {
 	private Button[][] pulls;
 	private Button[] ops;
@@ -413,12 +791,12 @@ public class The15App extends Applet {
 	private Label status;
 	private The15 game;
 	private GeneticAlgorithm ga;
-	private GATrainer trainer;
+	private GeneticAlgorithmTrainer trainer;
 
 	public void init() {
 		game = new The15();
 		ga = new GeneticAlgorithm();
-		trainer = new GATrainer(game, ga);
+		trainer = new GeneticAlgorithmTrainer(game, ga);
 
 		setLayout(new GridLayout(2, 1));
 
@@ -427,7 +805,7 @@ public class The15App extends Applet {
 		panels[1] = new Panel(new GridLayout(4, 1));
 
 		status = new Label(
-				"The Game Fifteen by Todor Balabanov - TeodorGig@mail.ru");
+				"The Game Fifteen by Todor Balabanov - tdb@tbsoft.eu");
 
 		pulls = new Button[4][];
 		for (int i = 0; i < pulls.length; i++)
@@ -438,12 +816,14 @@ public class The15App extends Applet {
 			ops[i] = new Button();
 			ops[i].addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					if ((evt.getActionCommand()).equals("Mix"))
-						game.mix();
+					if ((evt.getActionCommand()).equals("Shuffle"))
+						game.shuffle();
 					else if ((evt.getActionCommand()).equals("Reset"))
 						game.init();
-					else if ((evt.getActionCommand()).equals("Solve"))
+					else if ((evt.getActionCommand()).equals("Solve")) {
+						// TODO Solving should be done in separate thread.
 						trainer.train();
+					}
 
 					update();
 				}
@@ -452,7 +832,7 @@ public class The15App extends Applet {
 		}
 		panels[1].add(status);
 
-		ops[0].setLabel("Mix");
+		ops[0].setLabel("Shuffle");
 		ops[1].setLabel("Reset");
 		ops[2].setLabel("Solve");
 
@@ -486,12 +866,15 @@ public class The15App extends Applet {
 				});
 			}
 
-		for (int i = 0, k = 0; i < pulls.length; i++)
-			for (int j = 0; j < pulls[i].length; j++, k++)
+		for (int i = 0, k = 0; i < pulls.length; i++) {
+			for (int j = 0; j < pulls[i].length; j++, k++) {
 				panels[0].add(pulls[i][j]);
+			}
+		}
 
-		for (int i = 0; i < panels.length; i++)
+		for (int i = 0; i < panels.length; i++) {
 			add(panels[i]);
+		}
 
 		update();
 	}
@@ -503,7 +886,7 @@ public class The15App extends Applet {
 			for (int j = 0; j < pulls[i].length; j++) {
 				String caption = "";
 
-				if (state[i][j] == 0)
+				if (state[i][j] == Globals.EMPTY)
 					caption = "  ";
 				else {
 					if (state[i][j] < 10)
@@ -529,6 +912,6 @@ public class The15App extends Applet {
 		the15.start();
 
 		theApp.add(the15);
-		theApp.show();
+		theApp.setVisible(true);
 	}
 }
