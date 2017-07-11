@@ -1,3 +1,19 @@
+
+/*========================================================================
+ =                                                                       =
+ =     The Game Fifteen 0.51                                             =
+ =     Written by: (c) Todor Balabanov - todor.balabanov@gmail.com       =
+ =                                                                       =
+ =     New Bulgarian University, Sofia, 2004-2017                        =
+ =                                                                       =
+ =========================================================================
+ =                                                                       =
+ =     This distribution is free, and comes with no                      =
+ =     warranty. The program is open source provided under               =
+ =     the GNU General Public License.                                   =
+ =                                                                       =
+ ========================================================================*/
+
 import java.util.Random;
 
 /**
@@ -139,8 +155,7 @@ class The15 {
 
 		switch (direction) {
 		case (Globals.RIGHT):
-			if ((position[1] + 1) >= 0
-					&& (position[1] + 1) < table[position[0]].length) {
+			if ((position[1] + 1) >= 0 && (position[1] + 1) < table[position[0]].length) {
 				valid = true;
 			}
 			break;
@@ -150,8 +165,7 @@ class The15 {
 			}
 			break;
 		case (Globals.LEFT):
-			if ((position[1] - 1) >= 0
-					&& (position[1] - 1) < table[position[0]].length) {
+			if ((position[1] - 1) >= 0 && (position[1] - 1) < table[position[0]].length) {
 				valid = true;
 			}
 			break;
@@ -263,8 +277,7 @@ class The15 {
 		posTo[0] = position[0];
 		posTo[1] = position[1];
 
-		for (int i = 0; i < 10000 || posTo[0] != position[0]
-				|| posTo[1] != position[1]; i++) {
+		for (int i = 0; i < 10000 || posTo[0] != position[0] || posTo[1] != position[1]; i++) {
 			switch (prng.nextInt(4)) {
 			case (0):
 				makeMove(Globals.RIGHT);
