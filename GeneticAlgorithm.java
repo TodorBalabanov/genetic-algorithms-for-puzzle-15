@@ -144,8 +144,7 @@ class GeneticAlgorithm {
 	 * @author tdb@tbsoft.eu
 	 */
 	public void setFitness(double[] values) {
-		for (int i = 0; values != null && i < fitness.length
-				&& i < values.length; i++) {
+		for (int i = 0; values != null && i < fitness.length && i < values.length; i++) {
 			fitness[i] = values[i];
 		}
 	}
