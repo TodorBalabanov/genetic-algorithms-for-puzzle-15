@@ -1,3 +1,19 @@
+
+/*========================================================================
+ =                                                                       =
+ =     The Game Fifteen 0.51                                             =
+ =     Written by: (c) Todor Balabanov - todor.balabanov@gmail.com       =
+ =                                                                       =
+ =     New Bulgarian University, Sofia, 2004-2017                        =
+ =                                                                       =
+ =========================================================================
+ =                                                                       =
+ =     This distribution is free, and comes with no                      =
+ =     warranty. The program is open source provided under               =
+ =     the GNU General Public License.                                   =
+ =                                                                       =
+ ========================================================================*/
+
 import java.util.Random;
 
 /**
