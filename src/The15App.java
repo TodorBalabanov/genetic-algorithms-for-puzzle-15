@@ -1,3 +1,4 @@
+package src;
 
 /*========================================================================
  =                                                                       =
@@ -24,21 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-/**
- * Global constants class.
- * 
- * @author Todor Balabanov
- * @author tdb@tbsoft.eu
- */
-class Globals {
-	public static final int RIGHT = 1;
-	public static final int DOWN = 2;
-	public static final int LEFT = 4;
-	public static final int UP = 16;
-
-	public static final int EMPTY = 16;
-}
 
 /**
  * Application class.
@@ -157,22 +143,5 @@ public class The15App extends Applet {
 
 				pulls[i][j].setLabel(caption);
 			}
-	}
-
-	public static void main(String[] args) {
-		Frame theApp = new Frame("");
-		theApp.setSize(380, 280);
-		theApp.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
-
-		The15App the15 = new The15App();
-		the15.init();
-		the15.start();
-
-		theApp.add(the15);
-		theApp.setVisible(true);
 	}
 }
