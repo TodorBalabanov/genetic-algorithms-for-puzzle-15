@@ -1,4 +1,4 @@
-package src;
+package eu.veldsoft.puzzle.fifteen;
 
 /*========================================================================
  =                                                                       =
@@ -103,7 +103,7 @@ class The15 {
 		for (int i = 0, k = 0; i < table.length; i++) {
 			for (int j = 0; j < table[i].length; j++, k++) {
 				if (k == 15) {
-					table[i][j] = Globals.EMPTY;
+					table[i][j] = Util.EMPTY;
 				} else {
 					table[i][j] = k + 1;
 				}
@@ -131,7 +131,7 @@ class The15 {
 	private void findEmptyCellPostion() {
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table[i].length; j++) {
-				if (table[i][j] == Globals.EMPTY) {
+				if (table[i][j] == Util.EMPTY) {
 					position[0] = i;
 					position[1] = j;
 					return;
@@ -155,22 +155,22 @@ class The15 {
 		boolean valid = false;
 
 		switch (direction) {
-		case (Globals.RIGHT):
+		case (Util.RIGHT):
 			if ((position[1] + 1) >= 0 && (position[1] + 1) < table[position[0]].length) {
 				valid = true;
 			}
 			break;
-		case (Globals.DOWN):
+		case (Util.DOWN):
 			if ((position[0] + 1) >= 0 && (position[0] + 1) < table.length) {
 				valid = true;
 			}
 			break;
-		case (Globals.LEFT):
+		case (Util.LEFT):
 			if ((position[1] - 1) >= 0 && (position[1] - 1) < table[position[0]].length) {
 				valid = true;
 			}
 			break;
-		case (Globals.UP):
+		case (Util.UP):
 			if ((position[0] - 1) >= 0 && (position[0] - 1) < table.length) {
 				valid = true;
 			}
@@ -281,16 +281,16 @@ class The15 {
 		for (int i = 0; i < 10000 || posTo[0] != position[0] || posTo[1] != position[1]; i++) {
 			switch (prng.nextInt(4)) {
 			case (0):
-				makeMove(Globals.RIGHT);
+				makeMove(Util.RIGHT);
 				break;
 			case (1):
-				makeMove(Globals.DOWN);
+				makeMove(Util.DOWN);
 				break;
 			case (2):
-				makeMove(Globals.LEFT);
+				makeMove(Util.LEFT);
 				break;
 			case (3):
-				makeMove(Globals.UP);
+				makeMove(Util.UP);
 				break;
 			}
 		}
@@ -307,16 +307,16 @@ class The15 {
 	 */
 	public void makeMove(int direction) {
 		switch (direction) {
-		case (Globals.RIGHT):
+		case (Util.RIGHT):
 			makeMove(position[0], position[1] + 1);
 			break;
-		case (Globals.DOWN):
+		case (Util.DOWN):
 			makeMove(position[0] + 1, position[1]);
 			break;
-		case (Globals.LEFT):
+		case (Util.LEFT):
 			makeMove(position[0], position[1] - 1);
 			break;
-		case (Globals.UP):
+		case (Util.UP):
 			makeMove(position[0] - 1, position[1]);
 			break;
 		}
@@ -363,7 +363,7 @@ class The15 {
 					continue;
 				}
 
-				if (table[i][j] != Globals.EMPTY) {
+				if (table[i][j] != Util.EMPTY) {
 					/*
 					 * Empty cell is not moving.
 					 */

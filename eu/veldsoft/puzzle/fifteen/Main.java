@@ -1,4 +1,4 @@
-package src;
+package eu.veldsoft.puzzle.fifteen;
 
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;

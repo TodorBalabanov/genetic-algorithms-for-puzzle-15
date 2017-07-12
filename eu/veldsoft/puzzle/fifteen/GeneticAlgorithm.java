@@ -1,4 +1,4 @@
-package src;
+package eu.veldsoft.puzzle.fifteen;
 
 /*========================================================================
  =                                                                       =
@@ -97,16 +97,16 @@ class GeneticAlgorithm {
 		for (int i = 0; i < chrom.length; i++)
 			switch (prng.nextInt(4)) {
 			case (0):
-				chrom[i] = Globals.RIGHT;
+				chrom[i] = Util.RIGHT;
 				break;
 			case (1):
-				chrom[i] = Globals.DOWN;
+				chrom[i] = Util.DOWN;
 				break;
 			case (2):
-				chrom[i] = Globals.LEFT;
+				chrom[i] = Util.LEFT;
 				break;
 			case (3):
-				chrom[i] = Globals.UP;
+				chrom[i] = Util.UP;
 				break;
 			}
 
@@ -227,16 +227,16 @@ class GeneticAlgorithm {
 
 			switch (prng.nextInt(4)) {
 			case (0):
-				population[i][pos] = Globals.RIGHT;
+				population[i][pos] = Util.RIGHT;
 				break;
 			case (1):
-				population[i][pos] = Globals.DOWN;
+				population[i][pos] = Util.DOWN;
 				break;
 			case (2):
-				population[i][pos] = Globals.LEFT;
+				population[i][pos] = Util.LEFT;
 				break;
 			case (3):
-				population[i][pos] = Globals.UP;
+				population[i][pos] = Util.UP;
 				break;
 			}
 		}

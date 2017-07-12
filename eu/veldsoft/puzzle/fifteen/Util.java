@@ -1,12 +1,12 @@
-package src;
+package eu.veldsoft.puzzle.fifteen;
 
 /**
- * Global constants class.
+ * Utility class.
  * 
  * @author Todor Balabanov
  * @author tdb@tbsoft.eu
  */
-class Globals {
+class Util {
 	public static final int RIGHT = 1;
 	public static final int DOWN = 2;
 	public static final int LEFT = 4;

@@ -1,4 +1,4 @@
-package src;
+package eu.veldsoft.puzzle.fifteen;
 /*========================================================================
  =                                                                       =
  =     The Game Fifteen 0.51                                             =
