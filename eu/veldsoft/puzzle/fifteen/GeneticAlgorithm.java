@@ -1,22 +1,5 @@
 package eu.veldsoft.puzzle.fifteen;
 
-/*========================================================================
- =                                                                       =
- =     The Game Fifteen 0.51                                             =
- =     Written by: (c) Todor Balabanov - todor.balabanov@gmail.com       =
- =                                                                       =
- =     New Bulgarian University, Sofia, 2004-2017                        =
- =                                                                       =
- =========================================================================
- =                                                                       =
- =     This distribution is free, and comes with no                      =
- =     warranty. The program is open source provided under               =
- =     the GNU General Public License.                                   =
- =                                                                       =
- ========================================================================*/
-
-import java.util.Random;
-
 /**
  * Class for the genetic algorithm.
  * 
@@ -24,11 +7,6 @@ import java.util.Random;
  * @author tdb@tbsoft.eu
  */
 class GeneticAlgorithm {
-	/**
-	 * Pseudo-random number generator.
-	 */
-	private static final Random prng = new Random();
-
 	/**
 	 * Population size
 	 */
@@ -42,7 +20,7 @@ class GeneticAlgorithm {
 	/**
 	 * Population
 	 */
-	private int[][] population;
+	private Direction[][] population;
 
 	/**
 	 * Fitness value for each chromosome.
@@ -56,7 +34,7 @@ class GeneticAlgorithm {
 	 * @author tdb@tbsoft.eu
 	 */
 	public GeneticAlgorithm() {
-		population = new int[4 * POPULATION_SIZE][];
+		population = new Direction[4 * POPULATION_SIZE][];
 		fitness = new double[4 * POPULATION_SIZE];
 	}
 
@@ -88,25 +66,24 @@ class GeneticAlgorithm {
 	 * @return Chromosome with random size and values.
 	 * 
 	 * @author Todor Balabanov
-	 * @author tdb@tbsoft.eu
 	 */
-	private int[] generateRandomChromosome() {
-		int[] chrom = null;
+	private Direction[] generateRandomChromosome() {
+		Direction[] chrom = null;
 
-		chrom = new int[1 + prng.nextInt(AVERAGE_CHROMOSOME_SIZE)];
+		chrom = new Direction[1 + Util.PRNG.nextInt(AVERAGE_CHROMOSOME_SIZE)];
 		for (int i = 0; i < chrom.length; i++)
-			switch (prng.nextInt(4)) {
+			switch (Util.PRNG.nextInt(4)) {
 			case (0):
-				chrom[i] = Util.RIGHT;
+				chrom[i] = Direction.RIGHT;
 				break;
 			case (1):
-				chrom[i] = Util.DOWN;
+				chrom[i] = Direction.DOWN;
 				break;
 			case (2):
-				chrom[i] = Util.LEFT;
+				chrom[i] = Direction.LEFT;
 				break;
 			case (3):
-				chrom[i] = Util.UP;
+				chrom[i] = Direction.UP;
 				break;
 			}
 
@@ -126,18 +103,18 @@ class GeneticAlgorithm {
 	 * @author Todor Balabanov
 	 * @author tdb@tbsoft.eu
 	 */
-	private int[] crossover(int[] a, int[] b) {
-		int[] c = null;
+	private Direction[] crossover(Direction[] a, Direction[] b) {
+		Direction[] c = null;
 
 		int min = Math.min(a.length, b.length);
 		int max = Math.max(a.length, b.length);
 
-		int pos = prng.nextInt(min + 1);
+		int pos = Util.PRNG.nextInt(min + 1);
 
 		if (a.length == max) {
-			c = new int[min];
+			c = new Direction[min];
 		} else if (b.length == max) {
-			c = new int[max];
+			c = new Direction[max];
 		}
 
 		// TODO Better crossover than single cut point can be used.
@@ -174,11 +151,11 @@ class GeneticAlgorithm {
 	 * @author Todor Balabanov
 	 * @author tdb@tbsoft.eu
 	 */
-	public int[][] getPopulation() {
-		int[][] values = new int[population.length][];
+	public Direction[][] getPopulation() {
+		Direction[][] values = new Direction[population.length][];
 
 		for (int i = 0; i < population.length; i++) {
-			values[i] = new int[population[i].length];
+			values[i] = new Direction[population[i].length];
 		}
 
 		for (int i = 0; i < population.length; i++) {
@@ -194,7 +171,6 @@ class GeneticAlgorithm {
 	 * Initialize.
 	 * 
 	 * @author Todor Balabanov
-	 * @author tdb@tbsoft.eu
 	 */
 	public void init() {
 		for (int i = 0; i < population.length; i++) {
@@ -211,7 +187,7 @@ class GeneticAlgorithm {
 	public void crossover() {
 		for (int i = 0; i < population.length / 2; i++) {
 			population[population.length / 2 + i] = crossover(population[i],
-					population[prng.nextInt(population.length / 2)]);
+					population[Util.PRNG.nextInt(population.length / 2)]);
 		}
 	}
 
@@ -223,20 +199,20 @@ class GeneticAlgorithm {
 	 */
 	public void mutate() {
 		for (int i = population.length / 2; i < population.length; i++) {
-			int pos = prng.nextInt(population[i].length);
+			int pos = Util.PRNG.nextInt(population[i].length);
 
-			switch (prng.nextInt(4)) {
+			switch (Util.PRNG.nextInt(4)) {
 			case (0):
-				population[i][pos] = Util.RIGHT;
+				population[i][pos] = Direction.RIGHT;
 				break;
 			case (1):
-				population[i][pos] = Util.DOWN;
+				population[i][pos] = Direction.DOWN;
 				break;
 			case (2):
-				population[i][pos] = Util.LEFT;
+				population[i][pos] = Direction.LEFT;
 				break;
 			case (3):
-				population[i][pos] = Util.UP;
+				population[i][pos] = Direction.UP;
 				break;
 			}
 		}
@@ -266,7 +242,7 @@ class GeneticAlgorithm {
 					continue;
 				}
 
-				int[] buffer = population[i];
+				Direction[] buffer = population[i];
 				double value = fitness[i];
 				population[i] = population[i + 1];
 				fitness[i] = fitness[i + 1];

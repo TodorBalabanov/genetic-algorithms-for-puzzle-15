@@ -67,7 +67,7 @@ class GeneticAlgorithmTrainer {
 			ga.crossover();
 			ga.mutate();
 
-			int[][] population = ga.getPopulation();
+			Direction[][] population = ga.getPopulation();
 			double[] fitness = new double[population.length];
 
 			for (int i = 0; i < population.length; i++) {

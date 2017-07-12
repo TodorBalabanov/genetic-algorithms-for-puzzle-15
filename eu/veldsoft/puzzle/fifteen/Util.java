@@ -1,16 +1,20 @@
 package eu.veldsoft.puzzle.fifteen;
 
+import java.util.Random;
+
 /**
  * Utility class.
  * 
  * @author Todor Balabanov
- * @author tdb@tbsoft.eu
  */
 class Util {
-	public static final int RIGHT = 1;
-	public static final int DOWN = 2;
-	public static final int LEFT = 4;
-	public static final int UP = 16;
+	/**
+	 * Pseudo-random number generator.
+	 */
+	static final Random PRNG = new Random();
 
-	public static final int EMPTY = 16;
+	/**
+	 * Empty cell index.
+	 */
+	static final int EMPTY = 16;
 }

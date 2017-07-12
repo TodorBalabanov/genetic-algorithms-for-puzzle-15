@@ -1,22 +1,5 @@
 package eu.veldsoft.puzzle.fifteen;
 
-/*========================================================================
- =                                                                       =
- =     The Game Fifteen 0.51                                             =
- =     Written by: (c) Todor Balabanov - todor.balabanov@gmail.com       =
- =                                                                       =
- =     New Bulgarian University, Sofia, 2004-2017                        =
- =                                                                       =
- =========================================================================
- =                                                                       =
- =     This distribution is free, and comes with no                      =
- =     warranty. The program is open source provided under               =
- =     the GNU General Public License.                                   =
- =                                                                       =
- ========================================================================*/
-
-import java.util.Random;
-
 /**
  * Puzzle class.
  * 
@@ -24,11 +7,6 @@ import java.util.Random;
  * @author tdb@tbsoft.eu
  */
 class The15 {
-	/**
-	 * Pseudo-random number generator.
-	 */
-	private static final Random prng = new Random();
-
 	/**
 	 * Blocks.
 	 */
@@ -149,28 +127,27 @@ class The15 {
 	 * @return True if there is valid move, false otherwise.
 	 * 
 	 * @author Todor Balabanov
-	 * @author tdb@tbsoft.eu
 	 */
-	public boolean isValidMove(int direction) {
+	public boolean isValidMove(Direction direction) {
 		boolean valid = false;
 
 		switch (direction) {
-		case (Util.RIGHT):
+		case RIGHT:
 			if ((position[1] + 1) >= 0 && (position[1] + 1) < table[position[0]].length) {
 				valid = true;
 			}
 			break;
-		case (Util.DOWN):
+		case DOWN:
 			if ((position[0] + 1) >= 0 && (position[0] + 1) < table.length) {
 				valid = true;
 			}
 			break;
-		case (Util.LEFT):
+		case LEFT:
 			if ((position[1] - 1) >= 0 && (position[1] - 1) < table[position[0]].length) {
 				valid = true;
 			}
 			break;
-		case (Util.UP):
+		case UP:
 			if ((position[0] - 1) >= 0 && (position[0] - 1) < table.length) {
 				valid = true;
 			}
@@ -279,18 +256,18 @@ class The15 {
 		posTo[1] = position[1];
 
 		for (int i = 0; i < 10000 || posTo[0] != position[0] || posTo[1] != position[1]; i++) {
-			switch (prng.nextInt(4)) {
+			switch (Util.PRNG.nextInt(4)) {
 			case (0):
-				makeMove(Util.RIGHT);
+				makeMove(Direction.RIGHT);
 				break;
 			case (1):
-				makeMove(Util.DOWN);
+				makeMove(Direction.DOWN);
 				break;
 			case (2):
-				makeMove(Util.LEFT);
+				makeMove(Direction.LEFT);
 				break;
 			case (3):
-				makeMove(Util.UP);
+				makeMove(Direction.UP);
 				break;
 			}
 		}
@@ -300,23 +277,22 @@ class The15 {
 	 * Do move.
 	 * 
 	 * @param direction
-	 *            In wich direction move to be done.
+	 *            In which direction move to be done.
 	 * 
 	 * @author Todor Balabanov
-	 * @author tdb@tbsoft.eu
 	 */
-	public void makeMove(int direction) {
+	public void makeMove(Direction direction) {
 		switch (direction) {
-		case (Util.RIGHT):
+		case RIGHT:
 			makeMove(position[0], position[1] + 1);
 			break;
-		case (Util.DOWN):
+		case DOWN:
 			makeMove(position[0] + 1, position[1]);
 			break;
-		case (Util.LEFT):
+		case LEFT:
 			makeMove(position[0], position[1] - 1);
 			break;
-		case (Util.UP):
+		case UP:
 			makeMove(position[0] - 1, position[1]);
 			break;
 		}
